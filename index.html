@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 2rem;
+            margin-top: 20px;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            height: 30px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+        }
+
+        .exam-container {
+            margin-bottom: 40px;
+        }
+
+        #start-button{
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 800;
+            background-color: #4caf50;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Bремя OPT</h1>
+        <button id="start-button">Start Exams</button>
+
+        <div id="exams-container" style="display: flex; justify-content: space-around;">
+            <div style="margin-right: 150px">
+                <div class="exam-container" id="exam1">
+                    <h2>Математика 1 (30 минут)</h2>
+                    <div class="timer" id="exam1-timer">00:30:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam1-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="exam-container" id="exam2">
+                    <h2>Математика 2 (60 минут)</h2>
+                    <div class="timer" id="exam2-timer">01:00:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam2-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="exam-container" id="exam3">
+                    <h2>Перемена (15 минут)</h2>
+                    <div class="timer" id="exam3-timer">00:15:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam3-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="exam-container" id="exam4">
+                    <h2>Аналогия (30 минут)</h2>
+                    <div class="timer" id="exam4-timer">00:30:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam4-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="exam-container" id="exam5">
+                    <h2>Чтение и понимание (60 минут)</h2>
+                    <div class="timer" id="exam5-timer">01:00:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam5-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="exam-container" id="exam6">
+                    <h2>Грамматика (35 минут)</h2>
+                    <div class="timer" id="exam6-timer">00:35:00</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="exam6-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const startButton = document.getElementById("start-button");
+            const examDurations = [0.2, 60, 15, 30, 60, 35]; // durations in минут
+            const examElements = [];
+
+            for (let i = 1; i <= examDurations.length; i++) {
+                examElements.push({
+                    timerElement: document.getElementById(`exam${i}-timer`),
+                    progressBar: document.getElementById(`exam${i}-progress-bar`)
+                });
+            }
+
+            startButton.addEventListener("click", function () {
+                startButton.style.display = "none"; // Hide start button
+                startExams(0);
+            });
+
+            function startExams(index) {
+                if (index >= examDurations.length) return;
+
+                const duration = examDurations[index] * 60 * 1000; // convert to milliseconds
+                startTimer(duration, examElements[index].timerElement, examElements[index].progressBar, function () {
+                    startExams(index + 1);
+                });
+            }
+
+            function startTimer(totalTime, timerElement, progressBar, callback) {
+                const startTime = new Date().getTime();
+                const endTime = startTime + totalTime;
+
+                function updateTimer() {
+                    const now = new Date().getTime();
+                    const timeRemaining = endTime - now;
+
+                    if (timeRemaining > 0) {
+                        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                        const минут = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                        timerElement.textContent = `${String(hours).padStart(2, '0')}h ${String(минут).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+
+                        const progress = ((totalTime - timeRemaining) / totalTime) * 100;
+                        progressBar.style.width = `${progress}%`;
+
+                        requestAnimationFrame(updateTimer);
+                    } else {
+                        timerElement.textContent = "Kонец раздела";
+                        progressBar.style.width = "100%";
+                        if (callback) callback();
+                    }
+                }
+
+                updateTimer();
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
