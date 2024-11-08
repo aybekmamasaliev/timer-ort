@@ -133,6 +133,7 @@
                 if (index >= examDurations.length) return;
 
                 const duration = examDurations[index] * 60 * 1000; // convert to milliseconds
+                
                 startTimer(duration, examElements[index].timerElement, examElements[index].progressBar, function () {
                     startExams(index + 1);
                 });
